@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres_db
+    image: postgres:13
+    restart: always
+    env_file:
+      - flask_app/src/utils/.env
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+
+  redis:
+    container_name: redis
+    image: redis:7.0-alpine
+    command:
+      - redis-server
+
+#   nginx:
+#     container_name: nginx
+#     build:
+#       context: ./nginx
+#     volumes:
+#       - static_data:/static
+#     ports:
+#       - "80:80"
+#     depends_on:
+#       - auth_api
+
+
+#   auth_api:
+#     container_name: auth_api
+#     build:
+#       context: flask_app
+#     env_file:
+#         - flask_app/src/utils/.env
+#     volumes:
+#       - static_data:/app/static
+#     image: flask_app
+#     depends_on:
+#       - redis
+#       - postgres
+
+# volumes:
+#   static_data:
+
+
+
