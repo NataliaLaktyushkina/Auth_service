@@ -1,3 +1,8 @@
+Адрес репозитория:
+https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
+
+[Cхема взаимодействия с Auth сервисом](flask_app/src/static)
+
 # Проектная работа 7 спринта
 
 Упростите регистрацию и аутентификацию пользователей в Auth-сервисе, добавив вход через социальные сервисы. Список сервисов выбирайте исходя из целевой аудитории онлайн-кинотеатра — подумайте, какими социальными сервисами они пользуются. Например, использовать [OAuth от Github](https://docs.github.com/en/free-pro-team@latest/developers/apps/authorizing-oauth-apps){target="_blank"} — не самая удачная идея. Ваши пользователи не разработчики и вряд ли имеют аккаунт на Github. А вот добавить Twitter, Facebook, VK, Google, Yandex или Mail будет хорошей идеей.

@@ -1,0 +1,15 @@
+PyJWT==2.4.0
+SQLAlchemy==1.4.39
+flasgger==0.9.5
+flask_jwt_extended==4.4.1
+flask_sqlalchemy==2.5.1
+gevent==21.12.0
+marshmallow==3.16.0
+psycopg2-binary==2.8.6
+pydantic==1.9.1
+python-dotenv==0.20.0
+redis==4.2.2
+flask-swagger-ui==4.11.1
+Flask-Limiter==2.5.0
+authlib==1.0.1
+
