@@ -14,7 +14,7 @@ def register_google(oauth_client):
         access_token_url=oauth_settings.GOOGLE_ACCESS_TOKEN_URL,
         authorize_url=oauth_settings.GOOGLE_AUTHORIZE_URL,
         api_base_url=oauth_settings.GOOGLE_API_BASE_URL,
-        client_kwargs={"scope": "openid profile email"},
+        client_kwargs={"scope": "profile email"},
     )
 
 

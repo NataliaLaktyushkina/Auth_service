@@ -1,4 +1,4 @@
-from flask import url_for, redirect
+from flask import url_for, redirect, session
 from flask_restx import reqparse
 from services.oauth import get_google_oauth_client
 
@@ -18,8 +18,13 @@ def oauth_login():
 def oauth_authorize():
     google = get_google_oauth_client()
     token = google.authorize_access_token()
-    resp = google.get('account/verify_credentials.json')
-    resp.raise_for_status()
-    profile = resp.json()
-    # do something with the token and profile
-    return redirect('/')
+    resp = google.get('userinfo')
+    user_info = resp.json()
+    session['profile'] = user_info
+    session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
+    return redirect('welcome_page')
+
+
+def welcome_page():
+    email = dict(session)['profile']['email']
+    return f'Hello, you are logged in as {email}!'
