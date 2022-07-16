@@ -5,6 +5,8 @@ info:
   version: '1.0'
 servers:
   - url: /v1
+network:
+    oauth2RedirectUrl
 tags:
   - name: Personal account
     description: API for user's authorization
@@ -297,8 +299,8 @@ paths:
                 $ref: '#/components/schemas/RolesList'
         '401':
           description: Could not verify
-  /google_login:
-    post:
+  /oauth_login:
+    get:
       tags:
         - Social
       responses:

@@ -11,10 +11,6 @@ def oauth_login():
     return google.authorize_redirect(redirect_uri)
 
 
-# google_authorize_parser = reqparse.RequestParser()
-# location argument - specify alternate locations to pull the values from
-# google_authorize_parser.add_argument("User-Agent", location="headers")
-
 def oauth_authorize():
     google = get_google_oauth_client()
     token = google.authorize_access_token()
