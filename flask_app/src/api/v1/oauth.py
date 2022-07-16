@@ -26,5 +26,5 @@ def oauth_authorize():
 
 
 def welcome_page():
-    email = dict(session)['profile']['email']
-    return f'Hello, you are logged in as {email}!'
+    name = dict(session)['profile']['name']
+    return f'Hello, you are logged in as {name}!'

@@ -1,6 +1,8 @@
 Адрес репозитория:
 https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 
+[Получить client_id и secret_key](https://console.cloud.google.com/apis/credentials/oauthclient)
+
 [Cхема взаимодействия с Auth сервисом](flask_app/src/static)
 
 # Проектная работа 7 спринта
