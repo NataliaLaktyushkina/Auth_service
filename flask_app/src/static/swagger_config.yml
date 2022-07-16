@@ -39,6 +39,16 @@ components:
     BaseAuth:
       type: http
       scheme: basic
+    oAuth2ClientCredentials:
+      type: oauth2
+      description: google oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
+          tokenUrl: https://accounts.google.com/o/oauth2/token
+          scopes:
+            profile: profile info
+            email: email
 security:
   - Bearer: []
 paths:
@@ -287,7 +297,7 @@ paths:
                 $ref: '#/components/schemas/RolesList'
         '401':
           description: Could not verify
-  /oauth_login:
+  /google_login:
     post:
       tags:
         - Social
@@ -301,4 +311,4 @@ paths:
                 items:
                   type: string
       security:
-        - BaseAuth: []
+        - oAuth2ClientCredentials: [profile, email]
