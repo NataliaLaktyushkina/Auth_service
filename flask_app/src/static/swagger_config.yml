@@ -5,6 +5,8 @@ info:
   version: '1.0'
 servers:
   - url: /v1
+network:
+    oauth2RedirectUrl
 tags:
   - name: Personal account
     description: API for user's authorization
@@ -39,6 +41,16 @@ components:
     BaseAuth:
       type: http
       scheme: basic
+    oAuth2ClientCredentials:
+      type: oauth2
+      description: google oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth
+          tokenUrl: https://accounts.google.com/o/oauth2/token
+          scopes:
+            profile: profile info
+            email: email
 security:
   - Bearer: []
 paths:
@@ -288,7 +300,7 @@ paths:
         '401':
           description: Could not verify
   /oauth_login:
-    post:
+    get:
       tags:
         - Social
       responses:
@@ -301,4 +313,4 @@ paths:
                 items:
                   type: string
       security:
-        - BaseAuth: []
+        - oAuth2ClientCredentials: [profile, email]

@@ -22,9 +22,17 @@ from services import oauth as oauth_service
 ACCESS_EXPIRES = timedelta(hours=1)
 REFRESH_EXPIRES = timedelta(days=30)
 
+oauth_settings = settings.get_oauth_settings()
+
 SWAGGER_URL = '/apidocs/'
 API_URL = '/static/swagger_config.yml'
-swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL)
+OAUTH2_CONFIG = {
+      'clientId': oauth_settings.GOOGLE_CLIENT_ID,
+      'clientSecret': oauth_settings.GOOGLE_CLIENT_SECRET ,
+      'appName':  'AUTH_API',
+      'oauth2RedirectUrl': oauth_settings.OAUTH_REDIRECT_URL
+   }
+swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL,  oauth_config=OAUTH2_CONFIG)
 
 oauth_client = OAuth()
 

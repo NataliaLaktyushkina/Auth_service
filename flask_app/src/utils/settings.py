@@ -54,6 +54,7 @@ class OAuthSettings(BaseSettings):
     GOOGLE_ACCESS_TOKEN_URL: str = os.getenv("GOOGLE_ACCESS_TOKEN_URL")
     GOOGLE_AUTHORIZE_URL: str = os.getenv("GOOGLE_AUTHORIZE_URL")
     GOOGLE_API_BASE_URL: str = os.getenv("GOOGLE_API_BASE_URL")
+    OAUTH_REDIRECT_URL: str = os.getenv("OAUTH_REDIRECT_URL")
 
     class Config:
         env_file = '.env'

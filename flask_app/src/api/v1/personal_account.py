@@ -1,6 +1,8 @@
 from datetime import timedelta
 from http import HTTPStatus
 
+import jwt
+
 from database.db_service import add_record_to_login_history, \
     create_user, change_password_in_db
 from database.db_service import change_login_in_db
@@ -13,6 +15,7 @@ from flask_jwt_extended import get_jti, get_jwt
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from werkzeug.security import check_password_hash, generate_password_hash
+from services.personal import Auth
 
 ACCESS_EXPIRES = timedelta(hours=1)
 REFRESH_EXPIRES = timedelta(days=30)
@@ -29,19 +32,10 @@ def sign_up():
 
     new_user = create_user(username, password)
 
-    access_token = create_access_token(identity=new_user.id, fresh=True)
-    refresh_token = create_refresh_token(identity=new_user.id)
-    user_agent = request.headers['user_agent']
+    jwt_tokens = Auth.get_jwt_tokens(new_user)
 
-    # запись в БД попытки входа
-    add_record_to_login_history(new_user, user_agent)
-
-    # запись в Redis refresh token
-    key = ':'.join(('user_refresh', user_agent, get_jti(refresh_token)))
-    storage.set(key, str(new_user.id), ex=REFRESH_EXPIRES)
-
-    return jsonify(access_token=access_token,
-                   refresh_token=refresh_token)
+    return {"access_token": jwt_tokens.access_token,
+            "refresh_token": jwt_tokens.refresH_token}
 
 
 def login():
@@ -59,20 +53,10 @@ def login():
 
     hash = generate_password_hash(user.password)
     if check_password_hash(hash, auth.password):
-        access_token = create_access_token(identity=user.id, fresh=True)
-        refresh_token = create_refresh_token(identity=user.id)
-        user_agent = request.headers['user_agent']
+        jwt_tokens = Auth.get_jwt_tokens(user)
 
-        # запись в БД попытки входа
-        add_record_to_login_history(user, user_agent)
-
-        # запись в Redis refresh token
-        key = ':'.join(('user_refresh', user_agent, get_jti(refresh_token)))
-        storage.set(key, str(user.id), ex=REFRESH_EXPIRES)
-
-        return jsonify(access_token=access_token,
-                       refresh_token=refresh_token)
-
+        return jsonify(access_token=jwt_tokens.access_token,
+                       refresh_token=jwt_tokens.refresH_token)
     return make_response('Could not verify', HTTPStatus.UNAUTHORIZED,
                          {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
