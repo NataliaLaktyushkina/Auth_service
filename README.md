@@ -3,7 +3,18 @@ https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 
 [Получить client_id и secret_key](https://console.cloud.google.com/apis/credentials/oauthclient)
 
-[Cхема взаимодействия с Auth сервисом](flask_app/src/static)
+Запуск приложения:
+
+`docker-compose up --build`
+
+Необходимо запустить в папке с файлом *"alembic.ini"*
+`alembic revision -m "initial"`
+`alembic upgrade head`    
+`alembic revision --autogenerate`
+`alembic upgrade head` 
+
+OAuth 2.0:
+[Login](http://127.0.0.1:5001/v1/oauth_login)
 
 # Проектная работа 7 спринта
 

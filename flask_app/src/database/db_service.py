@@ -1,11 +1,13 @@
+import secrets
+import string
 import uuid
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
-from database.db import db
 from werkzeug.security import generate_password_hash
 
-from .dm_models import User, LoginHistory, Roles, UsersRoles
+from database.db import db
+from .dm_models import User, LoginHistory, Roles, UsersRoles, SocialAccount
 
 
 def get_user_by_login(login: str) -> User:
@@ -22,14 +24,36 @@ def add_record_to_login_history(user: User, user_agent: str):
     db.session.commit()
 
 
-def create_user(username, password):
+def generate_password():
+
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(8))
+
+    return password
+
+
+def create_user(username, email, password:Optional[str] = None):
+    if password is None:
+        password = generate_password()
     hashed_password = generate_password_hash(password, method='sha256')
     new_user = User(login=username,
-                    password=hashed_password)
+                    password=hashed_password,
+                    email=email)
     db.session.add(new_user)
     db.session.commit()
 
     return new_user
+
+
+def create_social_account(social_id, social_name, user_id ):
+    new_social_account = SocialAccount(
+                            social_id=social_id,
+                            social_name=social_name,
+                            user_id=user_id)
+    db.session.add(new_social_account)
+    db.session.commit()
+
+    return new_social_account
 
 
 def change_login_in_db(user: User, new_login: str):
