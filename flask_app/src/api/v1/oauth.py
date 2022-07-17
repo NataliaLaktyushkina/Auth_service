@@ -22,16 +22,16 @@ def oauth_authorize():
 
     session['profile'] = user_info
     session.permanent = True  # make the session permanent, so it keeps existing after browser gets closed
-
+    social_name = 'google'
     social_acc_user = SocialAccount.get(social_id=user_info['id'],
-                                       social_name=user_info['name'],
+                                       social_name=social_name,
                                        email=user_info['email'])
     if social_acc_user is None:
         user = create_user(username=user_info['name'],
                            email=user_info['email'])
         social_acc_user = create_social_account(
             social_id=user_info['id'],
-            social_name=user_info['name'],
+            social_name=social_name,
             user_id=user.id)
 
     user = User.query.filter_by(id=social_acc_user.user_id).first()

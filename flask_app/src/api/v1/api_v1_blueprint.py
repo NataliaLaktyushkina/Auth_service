@@ -2,7 +2,7 @@ from flask import Blueprint
 from .personal_account import sign_up, login, logout, refresh, login_history, change_login, change_password
 from .roles import create_role, delete_role, change_role, roles_list
 from .users_roles import users_roles, assign_role, detach_role
-from .oauth import oauth_login, oauth_authorize, oauth_logout
+from .oauth import oauth_login, oauth_authorize
 
 app_v1_blueprint = Blueprint("v1", __name__)
 
