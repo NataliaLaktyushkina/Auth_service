@@ -27,22 +27,22 @@ services:
 #     depends_on:
 #       - auth_api
 
+# #
+  auth_api:
+    container_name: auth_api
+    build:
+      context: flask_app
+    env_file:
+        - flask_app/src/utils/.env
+    volumes:
+      - static_data:/app/static
+    image: flask_app
+    depends_on:
+      - redis
+      - postgres
 
-#   auth_api:
-#     container_name: auth_api
-#     build:
-#       context: flask_app
-#     env_file:
-#         - flask_app/src/utils/.env
-#     volumes:
-#       - static_data:/app/static
-#     image: flask_app
-#     depends_on:
-#       - redis
-#       - postgres
-
-# volumes:
-#   static_data:
+volumes:
+  static_data:
 
 
 

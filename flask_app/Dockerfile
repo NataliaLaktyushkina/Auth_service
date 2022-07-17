@@ -14,7 +14,8 @@ RUN pip install  --default-timeout=1000 --upgrade pip \
     && pip install --default-timeout=1000 --no-cache-dir -r requirements.txt
 
 COPY ./src /app
-#COPY ./tests /tests
 
 ENTRYPOINT ["sh","/app/entrypoint.sh"]
+
 CMD ["python", "/app/utils/pywsgi.py"]
+
