@@ -1,9 +1,9 @@
-from flask import url_for, redirect, session, jsonify
-from flask_restx import reqparse
+from flask import url_for, session, jsonify
+
+from database.db_service import create_user, create_social_account
+from database.dm_models import User, SocialAccount
 from services.oauth import get_google_oauth_client
 from services.personal import auth
-from database.dm_models import User, SocialAccount
-from database.db_service import create_user, create_social_account
 
 
 def oauth_login():
@@ -24,8 +24,8 @@ def oauth_authorize():
     session.permanent = True  # make the session permanent, so it keeps existing after browser gets closed
     social_name = 'google'
     social_acc_user = SocialAccount.get(social_id=user_info['id'],
-                                       social_name=social_name,
-                                       email=user_info['email'])
+                                        social_name=social_name,
+                                        email=user_info['email'])
     if social_acc_user is None:
         user = create_user(username=user_info['name'],
                            email=user_info['email'])
@@ -38,5 +38,3 @@ def oauth_authorize():
     jwt_tokens = auth.get_jwt_tokens(user)
     return jsonify(access_token=jwt_tokens['access_token'],
                    refresh_token=jwt_tokens['refresh_token'])
-
-

@@ -13,7 +13,8 @@ REFRESH_EXPIRES = timedelta(days=30)
 
 class Auth:
 
-    def get_jwt_tokens(self, user: User):
+    @staticmethod
+    def get_jwt_tokens(user: User):
         access_token = create_access_token(identity=user.id, fresh=True)
         refresh_token = create_refresh_token(identity=user.id)
         user_agent = request.headers['user_agent']
@@ -28,4 +29,5 @@ class Auth:
         return {"access_token": access_token,
                 "refresh_token": refresh_token}
 
-auth=Auth()
+
+auth = Auth()

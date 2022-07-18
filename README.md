@@ -7,7 +7,7 @@ https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 
 `docker-compose up --build`
 
-Необходимо запустить в папке с файлом *"alembic.ini"*
+Необходимо запустить в папке с файлом *"alembic.ini":*
 `alembic revision -m "initial"`
 `alembic upgrade head`    
 `alembic revision --autogenerate`
