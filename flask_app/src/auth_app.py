@@ -109,8 +109,8 @@ def app_with_db():
     init_db(app)
     init_limiter(app)
     app.app_context().push()
-    app.run(port=5001)
-    # return app
+    # app.run(port=5001)
+    return app
 
 
 if __name__ == '__main__':

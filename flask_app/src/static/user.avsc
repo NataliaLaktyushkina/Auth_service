@@ -1,0 +1,10 @@
+{
+    'doc': 'Access and refresh tokens.',
+    'name': 'Tokens',
+    'namespace': 'Response',
+    'type': "record",
+    'fields': [
+        {'name': 'access_token', 'type': 'string'},
+        {'name': 'refresh_token', 'type': 'string'}
+    ],
+}
