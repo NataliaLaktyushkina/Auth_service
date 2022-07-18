@@ -16,18 +16,17 @@ services:
     command:
       - redis-server
 
-#   nginx:
-#     container_name: nginx
-#     build:
-#       context: ./nginx
-#     volumes:
-#       - static_data:/static
-#     ports:
-#       - "80:80"
-#     depends_on:
-#       - auth_api
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+    volumes:
+      - static_data:/static
+    ports:
+      - "80:80"
+    depends_on:
+      - auth_api
 
-# #
   auth_api:
     container_name: auth_api
     build:
