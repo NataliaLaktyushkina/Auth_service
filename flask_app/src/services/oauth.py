@@ -1,4 +1,6 @@
-import sys, os
+import os
+import sys
+
 sys.path.append(os.path.dirname(__file__) + '/..')
 from utils.settings import get_oauth_settings
 
