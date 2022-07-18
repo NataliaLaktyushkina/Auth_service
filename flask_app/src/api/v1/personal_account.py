@@ -26,11 +26,12 @@ storage = redis_app
 def sign_up():
     username = request.values.get("username", None)
     password = request.values.get("password", None)
-    if not username or not password:
+    email = request.values.get("email", None)
+    if not username or not password or not email:
         return make_response('Could not verify', HTTPStatus.UNAUTHORIZED,
                              {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
-    new_user = create_user(username, password)
+    new_user = create_user(username, email, password)
 
     jwt_tokens = Auth.get_jwt_tokens(new_user)
 
