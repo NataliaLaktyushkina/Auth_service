@@ -9,15 +9,14 @@ from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
 from api.v1.api_v1_blueprint import app_v1_blueprint
-from database.db import db
 from database.db import init_db
 from database.db_service import get_users_roles, create_user, assign_role_to_user
 from database.dm_models import Roles
 from database.redis_db import redis_app
-from utils.limiter import init_limiter
+from services import oauth as oauth_service
 from utils import logger
 from utils import settings
-from services import oauth as oauth_service
+from utils.limiter import init_limiter
 
 ACCESS_EXPIRES = timedelta(hours=1)
 REFRESH_EXPIRES = timedelta(days=30)
@@ -100,6 +99,13 @@ def create_app():
 
         return {'is_administrator': is_administrator,
                 'is_manager': is_manager}
+
+
+    @app.before_request
+    def before_request():
+        request_id = request.headers.get('X-Request-Id')
+        if not request_id:
+            raise RuntimeError('request id is required')
 
     return app
 

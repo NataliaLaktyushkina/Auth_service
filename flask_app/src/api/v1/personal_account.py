@@ -34,8 +34,8 @@ def sign_up():
 
     jwt_tokens = Auth.get_jwt_tokens(new_user)
 
-    return {"access_token": jwt_tokens.access_token,
-            "refresh_token": jwt_tokens.refresH_token}
+    return {"access_token": jwt_tokens["access_token"],
+            "refresh_token": jwt_tokens["refresh_token"]}
 
 
 def login():
@@ -55,8 +55,8 @@ def login():
     if check_password_hash(hash, auth.password):
         jwt_tokens = Auth.get_jwt_tokens(user)
 
-        return jsonify(access_token=jwt_tokens.access_token,
-                       refresh_token=jwt_tokens.refresH_token)
+        return jsonify(access_token=jwt_tokens["access_token"],
+                       refresh_token=jwt_tokens["refresh_token"])
     return make_response('Could not verify', HTTPStatus.UNAUTHORIZED,
                          {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
