@@ -1,11 +1,16 @@
 from flask import url_for, session, jsonify
+from opentracing_decorator import Tracing
 
 from database.db_service import create_user, create_social_account
 from database.dm_models import User, SocialAccount
 from services.oauth import get_google_oauth_client
 from services.personal import auth
+from utils.tracer import tracer
+
+tracing = Tracing(tracer=tracer)
 
 
+@tracer.start_as_current_span("oauth_login")
 def oauth_login():
     """Authenticate using google."""
 
@@ -14,6 +19,7 @@ def oauth_login():
     return google.authorize_redirect(redirect_uri)
 
 
+@tracer.start_as_current_span("oauth_authorize")
 def oauth_authorize():
     google = get_google_oauth_client()
     token = google.authorize_access_token()
