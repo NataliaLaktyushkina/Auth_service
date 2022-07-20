@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     DATABASE_NAME = os.getenv('POSTGRES_DB')
 
     REDIS_PORT: str = os.getenv('REDIS_PORT')
+    JAEGER_PORT: str = os.getenv('JAEGER_PORT')
 
     class Config:
         env_file = '.env'
@@ -33,17 +34,23 @@ class Settings(BaseSettings):
 class PromSettings(Settings):
 
     REDIS_HOST: str = os.getenv('REDIS_HOST')
+    JAEGER_HOST: str = os.getenv('JAEGER_HOST')
 
 
 class DevSettings(Settings):
 
     REDIS_HOST: str
+    JAEGER_HOST: str
 
     class Config:
         fields = {
             "REDIS_HOST": {
                 'env': 'REDIS_HOST_DEBUG'
+            },
+            "JAEGER_HOST": {
+                'env': 'JAEGER_HOST_DEBUG'
             }
+
         }
 
 

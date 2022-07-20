@@ -1,3 +1,4 @@
+import os
 from datetime import timedelta
 
 import click
@@ -114,8 +115,12 @@ def app_with_db():
     init_db(app)
     init_limiter(app)
     app.app_context().push()
-    app.run(port=5001)
-    # return app
+    IS_DOCKER = os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False)
+    if IS_DOCKER:
+        return app
+    else:
+        app.run(port=5001)
+
 
 
 if __name__ == '__main__':

@@ -9,9 +9,14 @@ from opentelemetry.sdk._metrics.export import (
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+from utils.settings import get_settings
+
+jaeger_settings = get_settings()
+jaeger_host = jaeger_settings.JAEGER_HOST
+jaeger_port = jaeger_settings.JAEGER_PORT
 
 resource = Resource(attributes={
-    SERVICE_NAME: "Auth_API"
+    SERVICE_NAME: 'Auth_API'
 })
 
 
@@ -21,8 +26,9 @@ def configure_tracer() -> None:
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(
             JaegerExporter(
-                agent_host_name='localhost',
-                agent_port=6831,
+                # agent_host_name='localhost',
+                agent_host_name=jaeger_host,
+                agent_port=jaeger_port,
             )
         )
     )
