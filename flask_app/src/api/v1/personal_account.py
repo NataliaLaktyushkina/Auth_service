@@ -16,27 +16,32 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from werkzeug.security import check_password_hash, generate_password_hash
 from services.personal import Auth
+from opentracing_decorator import Tracing
+from utils.tracer import tracer
 
 ACCESS_EXPIRES = timedelta(hours=1)
 REFRESH_EXPIRES = timedelta(days=30)
 
 storage = redis_app
+tracing = Tracing(tracer=tracer)
 
 
+# @tracing.trace(operation_name="sign_up")
 def sign_up():
-    username = request.values.get("username", None)
-    password = request.values.get("password", None)
-    email = request.values.get("email", None)
-    if not username or not password or not email:
-        return make_response('Could not verify', HTTPStatus.UNAUTHORIZED,
-                             {'WWW-Authenticate': 'Basic realm="Login required!"'})
+    with tracer.start_as_current_span("sign_up") as span:
+        username = request.values.get("username", None)
+        password = request.values.get("password", None)
+        email = request.values.get("email", None)
+        if not username or not password or not email:
+            return make_response('Could not verify', HTTPStatus.UNAUTHORIZED,
+                                 {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
-    new_user = create_user(username, email, password)
+        new_user = create_user(username, email, password)
 
-    jwt_tokens = Auth.get_jwt_tokens(new_user)
+        jwt_tokens = Auth.get_jwt_tokens(new_user)
 
-    return {"access_token": jwt_tokens["access_token"],
-            "refresh_token": jwt_tokens["refresh_token"]}
+        return {"access_token": jwt_tokens["access_token"],
+                "refresh_token": jwt_tokens["refresh_token"]}
 
 
 def login():

@@ -100,11 +100,11 @@ def create_app():
         return {'is_administrator': is_administrator,
                 'is_manager': is_manager}
 
-    @app.before_request
-    def before_request():
-        request_id = request.headers.get('X-Request-Id')
-        if not request_id:
-            raise RuntimeError('request id is required')
+    # @app.before_request
+    # def before_request():
+    #     request_id = request.headers.get('X-Request-Id')
+    #     if not request_id:
+    #         raise RuntimeError('request id is required')
 
     return app
 
@@ -114,8 +114,8 @@ def app_with_db():
     init_db(app)
     init_limiter(app)
     app.app_context().push()
-    # app.run(port=5001)
-    return app
+    app.run(port=5001)
+    # return app
 
 
 if __name__ == '__main__':
