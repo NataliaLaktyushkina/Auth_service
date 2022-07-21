@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from typing import Optional
 
@@ -6,7 +7,6 @@ from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import UUID
 
 from .db import db
-
 
 
 class User(db.Model):
@@ -31,7 +31,10 @@ class LoginHistory(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     user_id = db.Column(UUID(as_uuid=True), ForeignKey(User.id))
     user_agent = db.Column(db.String, nullable=False)
-    auth_date = db.Column(db.DateTime, nullable=False)
+    auth_date = db.Column(db.DateTime,  default=datetime.datetime.utcnow, nullable=False)
+
+    def __repr__(self):
+        return f'<LoginHistory {self.user_id}:{self.auth_date}>'
 
 
 class Roles(db.Model):
@@ -73,7 +76,7 @@ class SocialAccount(db.Model):
         return f"<SocialAccount {self.social_name}:{self.user_id}>"
 
     @staticmethod
-    def get(social_id: str, social_name: str, email: str):
+    def get(social_id: str, social_name: str):
         """Get or create social account instance."""
 
         social_account = SocialAccount.query.filter_by(
@@ -82,8 +85,3 @@ class SocialAccount(db.Model):
         ).first()
         if social_account is not None:
             return social_account
-
-
-
-
-
