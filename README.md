@@ -38,6 +38,10 @@ https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 [Реализация](flask_app/src/utils/token_bucket.py)
 [Использование](flask_app/src/api/v1/personal_account.py)
 
+#### Партицирование
+[Партицирование](flask_app/src/database/dm_models.py) по дате рождения (=возрасту) - для фильтрации контента
+
+
 ----
 
 [Список переменных окружения](flask_app/src/utils/.env.example)
