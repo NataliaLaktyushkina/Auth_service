@@ -1,7 +1,4 @@
 
-- request id in header
-
-
 Адрес репозитория:
 https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 
@@ -21,6 +18,11 @@ OAuth 2.0:
 [Login](http://127.0.0.1:5001/v1/oauth_login)
 
 [Схемы взаимодействия (Avro)](flask_app/src/static)
+
+Jaeger:
+[Реализация](flask_app/src/utils/tracer.py)
+[Использование №1](flask_app/src/api/v1/oauth.py)
+[Использование №2](flask_app/src/api/v1/personal_account.py)
 
 # Проектная работа 7 спринта
 
