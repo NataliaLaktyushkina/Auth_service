@@ -17,7 +17,6 @@ from database.redis_db import redis_app
 from services import oauth as oauth_service
 from utils import logger
 from utils import settings
-from utils.limiter import init_limiter
 
 ACCESS_EXPIRES = timedelta(hours=1)
 REFRESH_EXPIRES = timedelta(days=30)
@@ -28,7 +27,7 @@ SWAGGER_URL = '/apidocs/'
 API_URL = '/static/swagger_config.yml'
 OAUTH2_CONFIG = {
       'clientId': oauth_settings.GOOGLE_CLIENT_ID,
-      'clientSecret': oauth_settings.GOOGLE_CLIENT_SECRET ,
+      'clientSecret': oauth_settings.GOOGLE_CLIENT_SECRET,
       'appName':  'AUTH_API',
       'oauth2RedirectUrl': oauth_settings.OAUTH_REDIRECT_URL
    }
@@ -40,9 +39,10 @@ oauth_client = OAuth()
 @click.command(name='create-superuser')
 @click.argument('name', envvar='SUPERUSER_NAME')
 @click.argument('password', envvar='SUPERUSER_PASS')
+@click.argument('email', envvar='SUPERUSER_EMAIL')
 @with_appcontext
-def create_superuser(name, password):
-    superuser = create_user(username=name, password=password)
+def create_superuser(name, email, password):
+    superuser = create_user(username=name, email=email,  password=password)
     db_role = Roles.query.filter_by(name='admin').first()
     if superuser and db_role:
         assign_role_to_user(superuser, db_role)
@@ -71,7 +71,6 @@ def create_app():
     @app.route('/static/<path:path>')
     def send_static(path):
         return send_from_directory('static', path)
-
 
     @jwt.token_in_blocklist_loader
     def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
@@ -113,16 +112,14 @@ def create_app():
 def app_with_db():
     app = create_app()
     init_db(app)
-    init_limiter(app)
+    # init_limiter(app)
     app.app_context().push()
-    IS_DOCKER = os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False)
-    if IS_DOCKER:
+    is_docker = os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False)
+    if is_docker:
         return app
     else:
         app.run(port=5001)
 
 
-
 if __name__ == '__main__':
     app_with_db()
-
