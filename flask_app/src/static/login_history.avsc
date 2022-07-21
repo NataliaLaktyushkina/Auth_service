@@ -1,0 +1,10 @@
+{
+    'doc': 'User login history',
+    'name': 'LoginHistory',
+    'namespace': 'Response',
+    'type': "record",
+    'fields': [
+        {'name': 'user_agent', 'type': 'string'},
+        {'name': 'auth_date', 'type': 'string'}
+    ],
+}

@@ -1,45 +1,48 @@
 from datetime import timedelta
 from http import HTTPStatus
 
-import jwt
-
-from database.db_service import add_record_to_login_history, \
-    create_user, change_password_in_db
-from database.db_service import change_login_in_db
-from database.dm_models import User, LoginHistory
-from database.redis_db import redis_app
 from flask import jsonify, request, make_response
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import get_jti, get_jwt
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
+from opentracing_decorator import Tracing
 from werkzeug.security import check_password_hash, generate_password_hash
+
+from database.db_service import change_login_in_db
+from database.db_service import create_user, change_password_in_db
+from database.dm_models import User, LoginHistory
+from database.redis_db import redis_app
 from services.personal import Auth
+from utils.tracer import tracer
 
 ACCESS_EXPIRES = timedelta(hours=1)
 REFRESH_EXPIRES = timedelta(days=30)
 
 storage = redis_app
+tracing = Tracing(tracer=tracer)
 
 
+@tracer.start_as_current_span("sign_up")
 def sign_up():
     username = request.values.get("username", None)
     password = request.values.get("password", None)
-    if not username or not password:
+    email = request.values.get("email", None)
+    if not username or not password or not email:
         return make_response('Could not verify', HTTPStatus.UNAUTHORIZED,
                              {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
-    new_user = create_user(username, password)
+    new_user = create_user(username, email, password)
 
     jwt_tokens = Auth.get_jwt_tokens(new_user)
 
-    return {"access_token": jwt_tokens.access_token,
-            "refresh_token": jwt_tokens.refresH_token}
+    return {"access_token": jwt_tokens["access_token"],
+            "refresh_token": jwt_tokens["refresh_token"]}
 
 
+@tracer.start_as_current_span("login")
 def login():
-
     auth = request.authorization
 
     if not auth.username or not auth.password:
@@ -55,8 +58,8 @@ def login():
     if check_password_hash(hash, auth.password):
         jwt_tokens = Auth.get_jwt_tokens(user)
 
-        return jsonify(access_token=jwt_tokens.access_token,
-                       refresh_token=jwt_tokens.refresH_token)
+        return jsonify(access_token=jwt_tokens["access_token"],
+                       refresh_token=jwt_tokens["refresh_token"])
     return make_response('Could not verify', HTTPStatus.UNAUTHORIZED,
                          {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
@@ -64,6 +67,7 @@ def login():
 # user’s refresh token must also be revoked when logging out;
 # otherwise, this refresh token could just be used to generate a new access token.
 @jwt_required(verify_type=False)
+@tracer.start_as_current_span("logout")
 def logout():
     token = get_jwt()
     jti = token["jti"]
@@ -79,6 +83,7 @@ def logout():
 # We are using the `refresh=True` options in jwt_required to only allow
 # refresh tokens to access this route.
 @jwt_required(refresh=True)
+@tracer.start_as_current_span("refresh")
 def refresh():
     """
     выдаёт новую пару токенов (access и refresh) в обмен на корректный refresh-токен.
@@ -106,6 +111,7 @@ def refresh():
 
 
 @jwt_required()
+@tracer.start_as_current_span("login_history")
 def login_history():
     """
     получение пользователем своей истории входов в аккаунт
@@ -124,6 +130,7 @@ def login_history():
 
 
 @jwt_required()
+@tracer.start_as_current_span("change_login")
 def change_login():
 
     new_username = request.values.get('new_username')
@@ -139,6 +146,7 @@ def change_login():
 
 
 @jwt_required()
+@tracer.start_as_current_span("change_password")
 def change_password():
 
     new_password = request.values.get('new_password')

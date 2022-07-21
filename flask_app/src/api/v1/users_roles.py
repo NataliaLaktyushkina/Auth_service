@@ -1,10 +1,10 @@
 from http import HTTPStatus
 
+from flask import jsonify, request, make_response
+
 from database.db_service import get_roles_by_user, assign_role_to_user, detach_role_from_user
 from database.dm_models import Roles, User
 from decorators import admin_required
-from flask import jsonify, request, make_response
-from flask_jwt_extended import jwt_required
 
 
 @admin_required()

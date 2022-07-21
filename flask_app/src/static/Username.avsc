@@ -1,0 +1,9 @@
+{
+    'doc': 'Username',
+    'name': 'Username',
+    'namespace': 'Response',
+    'type': "record",
+    'fields': [
+        {'name': 'username', 'type': 'string'}
+    ],
+}

@@ -1,0 +1,9 @@
+{
+    'doc': 'User"s roles',
+    'name': 'RolesList',
+    'namespace': 'Response',
+    'type': "record",
+    'fields': [
+        {'name': 'role', 'type': 'string'}
+    ],
+}
