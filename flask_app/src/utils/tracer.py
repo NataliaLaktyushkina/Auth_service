@@ -28,7 +28,7 @@ def configure_tracer() -> None:
             JaegerExporter(
                 # agent_host_name='localhost',
                 agent_host_name=jaeger_host,
-                agent_port=jaeger_port,
+                agent_port=int(jaeger_port),
             )
         )
     )

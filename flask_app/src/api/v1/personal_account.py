@@ -16,6 +16,7 @@ from database.dm_models import User, LoginHistory
 from database.redis_db import redis_app
 from services.personal import Auth
 from utils.tracer import tracer
+from utils.token_bucket import token_bucket
 
 ACCESS_EXPIRES = timedelta(hours=1)
 REFRESH_EXPIRES = timedelta(days=30)
@@ -25,6 +26,7 @@ tracing = Tracing(tracer=tracer)
 
 
 @tracer.start_as_current_span("sign_up")
+@token_bucket.rate_limit()
 def sign_up():
     username = request.values.get("username", None)
     password = request.values.get("password", None)
@@ -42,6 +44,7 @@ def sign_up():
 
 
 @tracer.start_as_current_span("login")
+@token_bucket.rate_limit()
 def login():
     auth = request.authorization
 
@@ -84,6 +87,7 @@ def logout():
 # refresh tokens to access this route.
 @jwt_required(refresh=True)
 @tracer.start_as_current_span("refresh")
+@token_bucket.rate_limit()
 def refresh():
     """
     выдаёт новую пару токенов (access и refresh) в обмен на корректный refresh-токен.
@@ -112,6 +116,7 @@ def refresh():
 
 @jwt_required()
 @tracer.start_as_current_span("login_history")
+@token_bucket.rate_limit()
 def login_history():
     """
     получение пользователем своей истории входов в аккаунт

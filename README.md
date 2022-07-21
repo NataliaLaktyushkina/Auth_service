@@ -1,10 +1,10 @@
 
-Адрес репозитория:
+#### Адрес репозитория:
 https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 
 [Получить client_id и secret_key](https://console.cloud.google.com/apis/credentials/oauthclient)
 
-Запуск приложения:
+#### Запуск приложения:
 
 `docker-compose up --build`
 
@@ -14,15 +14,36 @@ https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 `alembic revision --autogenerate`
 `alembic upgrade head` 
 
-OAuth 2.0:
+Создание пользователя с админскими правами:
+Переменные окружения:
+- SUPERUSER_NAME
+- SUPERUSER_EMAIL
+- SUPERUSER_PASS
+
+Команды:
+- `export FLASK_APP=auth_app`
+- `flask create-superuser`
+
+#### OAuth 2.0:
 [Login](http://127.0.0.1:5001/v1/oauth_login)
 
 [Схемы взаимодействия (Avro)](flask_app/src/static)
 
-Jaeger:
+####  Jaeger:
 [Реализация](flask_app/src/utils/tracer.py)
 [Использование №1](flask_app/src/api/v1/oauth.py)
 [Использование №2](flask_app/src/api/v1/personal_account.py)
+
+#### Limiter:
+[Реализация](flask_app/src/utils/token_bucket.py)
+[Использование](flask_app/src/api/v1/personal_account.py)
+
+----
+
+[Список переменных окружения](flask_app/src/utils/.env.example)
+
+[Документация по AuthAPI](http://127.0.0.1:80/apidocs )
+
 
 # Проектная работа 7 спринта
 
