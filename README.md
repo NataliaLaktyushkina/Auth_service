@@ -38,6 +38,19 @@ https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 [Реализация](flask_app/src/utils/token_bucket.py)
 [Использование](flask_app/src/api/v1/personal_account.py)
 
+#### Партицирование
+[Партицирование](flask_app/src/database/dm_models.py) по дате рождения (=возрасту) - для фильтрации контента
+ Alembic не подтянул партицирование - [миграции прописаны вручную](flask_app/src/alembic/versions/custom1_partition.py)
+
+При созданнии партицированной таблицы - ключ партицирования необходимо указать как primary key, по-другому primary key для таблицы postgres создать не дает.
+При этом в других таблицах есть foreign keys, которые ссылаются на id в таблицы users. 
+Я хотела перенести данные из таблицы users в новую партицированную таблицу. 
+Для этого нужно пересоздать foreign keys в таблицах (login history, social_acc), чтобы ключ ссылался на новую таблицу,
+Но postgres не дает создать новый ключ -  (psycopg2.errors.InvalidForeignKey) there is no unique constraint matching given keys for referenced table "users_partitioned".
+Unigue constraint без указания колонки партицирования postgres также не дает создать -  unique constraint on partitioned table must include all partitioning columns
+
+**И получается, что непонятно, как будут другие таблицы работать с партицированной.**
+
 ----
 
 [Список переменных окружения](flask_app/src/utils/.env.example)
