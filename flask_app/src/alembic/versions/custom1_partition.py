@@ -7,7 +7,8 @@ Create Date: 2022-07-22 01:41:34.401337
 """
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy import MetaData, select, Table
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = 'custom1'
@@ -27,115 +28,60 @@ def upgrade() -> None:
     op.create_unique_constraint(None, 'users_roles', ['id'])
     # ### end Alembic commands ###
 
-
-
-    # op.execute("""
-    #     CREATE TABLE  "users_partitioned" (
-    #     id uuid not null PRIMARY KEY,
-    #     login TEXT not null ,
-    #     password TEXT not null,
-    #     email TEXT not null,
-    #     date_of_birth timestamp default now()
-    #     )PARTITION BY RANGE (date_of_birth);
-    # """)
-    #
-    # op.execute("""
-    #     CONSTRAINT UNIQUE INDEX  id_email_date ON users_partitioned (id, email, date_of_birth)
-    # """)
-    #
-    #
-    # op.execute("""
-    #     CREATE TABLE users_birthdays_2004_to_2022
-    #     (LIKE users INCLUDING DEFAULTS INCLUDING CONSTRAINTS);
-    # """)
-    #
-    # op.execute("""
-    #     ALTER TABLE users_birthdays_2004_to_2022 ADD CONSTRAINT birthday_check
-    #     CHECK ( date_of_birth >= DATE '2004-01-1' AND date_of_birth <= DATE '2022-12-31')
-    # """)
-    #
-    # op.execute("""
-    #     ALTER TABLE users ATTACH PARTITION users_birthdays_2004_to_2022
-    #     FOR VALUES IN ('date_of_birth');
-    # """)
-    #
-    #
-    # op.execute( """
-    #     CREATE TABLE IF NOT EXISTS "users_birthdays_1920_to_1979"
-    #     PARTITION OF "users"
-    #     FOR VALUES FROM ('1920-01-01') TO ('1979-12-31');
-    #     """)
-    #
-    # op.execute( """
-    #     CREATE TABLE IF NOT EXISTS "users_birthdays_1980_to_2003"
-    #     PARTITION OF "users"
-    #     FOR VALUES FROM ('1980-01-01') TO ('2003-12-31');
-    #     """)
-    #
-    # op.execute("""
-    #     CREATE TABLE IF NOT EXISTS "users_birthdays_2004_to_2022"
-    #     PARTITION OF "users"
-    #     FOR VALUES FROM ('2004-01-01') TO ('2022-12-31');
-    #     """)
-
     # creating partition tables
-
     op.execute("""
-              CREATE TABLE IF NOT EXISTS users_birthdays_1920_to_1979  (
-                  CHECK ( date_of_birth >= '1920-01-01'::DATE AND
-                          date_of_birth <= '1979-12-31'::DATE)
-                  ) INHERITS (users);
-              """)
-
+        CREATE TABLE  "users_partitioned" (
+        id uuid not null,
+        login TEXT not null ,
+        password TEXT not null,
+        email TEXT not null,
+        date_of_birth timestamp default now() not null,
+        PRIMARY KEY (id, email, date_of_birth)
+        ) PARTITION BY RANGE (date_of_birth);
+    """)
+    #
+    #
     op.execute("""
-              ALTER TABLE ONLY users_birthdays_1920_to_1979
-                  ADD CONSTRAINT users_birthdays_1920_to_1979_pkey PRIMARY KEY (id, email, date_of_birth);
-              """)
-
-   op.execute( """
-        CREATE TABLE IF NOT EXISTS users_birthdays_1980_to_2003 (
-            CHECK ( date_of_birth >= '1980-01-01'::DATE AND
-                    date_of_birth <= '2003-12-31'::DATE)
-            ) INHERITS (users);
+        CREATE TABLE IF NOT EXISTS "users_birthdays_1920_to_1979"
+        PARTITION OF "users_partitioned"
+        FOR VALUES FROM ('1920-01-01') TO ('1979-12-31');
         """)
 
     op.execute("""
-        ALTER TABLE ONLY users_birthdays_1980_to_2003
-            ADD CONSTRAINT users_birthdays_1980_to_2003_pkey PRIMARY KEY (id, email, date_of_birth);
+        CREATE TABLE IF NOT EXISTS "users_birthdays_1980_to_2003"
+        PARTITION OF "users_partitioned"
+        FOR VALUES FROM ('1980-01-01') TO ('2003-12-31');
         """)
 
     op.execute("""
-           CREATE TABLE IF NOT EXISTS users_birthdays_2004_to_2022 (
-               CHECK ( date_of_birth >= '2004-01-01'::DATE AND
-                       date_of_birth <= '2022-12-31'::DATE)
-               ) INHERITS (users);
-           """)
+        CREATE TABLE IF NOT EXISTS "users_birthdays_2004_to_2022"
+        PARTITION OF "users_partitioned"
+        FOR VALUES FROM ('2004-01-01') TO ('2022-12-31');
+        """)
 
-    op.execute("""
-           ALTER TABLE ONLY users_birthdays_2004_to_2022
-               ADD CONSTRAINT users_birthdays_2004_to_2022_pkey PRIMARY KEY (id, email, date_of_birth);
-           """)
-
-
-#
-  # # find existing tables
-  #   meta = MetaData(bind=op.get_bind())
-  #   meta.reflect(only=("auth_history", "auth_history_partitioned"), schema="content")
-  #   auth_history_table = Table("auth_history", meta, schema="content")
-  #   auth_history_partitioned_table = Table(
-  #       "auth_history_partitioned", meta, schema="content"
-  #   )
-  #
-  #   # insert existing data into partitioned table
-  #   select_stmt = select(auth_history_table)
-  #   insert_stmt = auth_history_partitioned_table.insert().from_select(
-  #       auth_history_partitioned_table.columns, select_stmt
-  #   )
-  #   op.execute(insert_stmt)
-  #
-  #   # replace tables
-  #   op.drop_table("auth_history", schema="content")
-  #   op.rename_table("auth_history_partitioned", "auth_history", schema="content")
+    # # find existing tables
+    # meta = MetaData(bind=op.get_bind())
+    # meta.reflect(only=("users", "users_partitioned"))
+    # users_table = Table("users", meta)
+    # users_partitioned_table = Table(
+    #     "users_partitioned", meta
+    # )
+    #
+    # # insert existing data into partitioned table
+    # select_stmt = select(users_table)
+    # insert_stmt = users_partitioned_table.insert().from_select(
+    #     users_partitioned_table.columns, select_stmt
+    # )
+    # op.execute(insert_stmt)
+    #
+    # # foreign keys - doesnot work
+    # op.create_foreign_key("fk_user_id", "login_history", "users_partitioned",
+    #                       ["user_id"], ["id"], ondelete="CASCADE")
+    # op.drop_constraint("login_history_user_id_fkey", "login_history",
+    #                    type_="foreign_key")
+    # # replace tables
+    # op.drop_table("users")
+    # op.rename_table("users_partitioned", "users")
 
 
 def downgrade() -> None:
@@ -149,57 +95,35 @@ def downgrade() -> None:
     op.drop_constraint(None, 'login_history', type_='unique')
     # ### end Alembic commands ###
 
-  op.rename_table("auth_history", "auth_history_partitioned", schema="content")
-
-    # op.create_table(
-    #     "auth_history",
-    #     sa.Column("id", postgresql.UUID(as_uuid=True), default=uuid4, nullable=False),
-    #     sa.Column("user_id", postgresql.UUID(as_uuid=True), nullable=True),
-    #     sa.Column(
-    #         "timestamp", sa.DateTime(), server_default=sa.text("now()"), nullable=True
-    #     ),
-    #     sa.Column("user_agent", sa.Text(), nullable=False),
-    #     sa.Column("ip_addr", sa.String(length=100)),
-    #     sa.Column("device", sa.Text()),
-    #     sa.Column(
-    #         "created_on", sa.DateTime(), server_default=sa.text("now()"), nullable=True
-    #     ),
-    #     sa.Column(
-    #         "updated_on", sa.DateTime(), server_default=sa.text("now()"), nullable=True
-    #     ),
-    #     sa.Column(
-    #         "platform",
-    #         postgresql.ENUM(
-    #             "pc", "mobile", "tablet", name="platformenum", create_type=False
-    #         ),
-    #         server_default="pc",
-    #         nullable=False,
-    #     ),
-    #     sa.ForeignKeyConstraint(
-    #         ["user_id"],
-    #         ["content.users.id"],
-    #     ),
-    #     sa.PrimaryKeyConstraint("id"),
-    #     sa.UniqueConstraint("id", name="auth_history_uc"),
-    #     schema="content",
-    # )
+    # op.rename_table("users", "users_partitioned")
+    #
+    # op.create_table('users',
+    #                 sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+    #                 sa.Column('login', sa.String(), nullable=False),
+    #                 sa.Column('password', sa.String(), nullable=False),
+    #                 sa.Column('email', sa.String(), nullable=False),
+    #                 sa.PrimaryKeyConstraint('id'),
+    #                 sa.UniqueConstraint('email'),
+    #                 sa.UniqueConstraint('id'),
+    #                 sa.UniqueConstraint('login')
+    #                 )
     #
     # # find existing tables
     # meta = MetaData(bind=op.get_bind())
-    # meta.reflect(only=("auth_history", "auth_history_partitioned"), schema="content")
-    # auth_history_partitioned_table = Table(
-    #     "auth_history_partitioned", meta, schema="content"
+    # meta.reflect(only=("users", "users_partitioned"))
+    # users_partitioned_table = Table(
+    #     "users_partitioned", meta
     # )
-    # auth_history_table = Table("auth_history", meta, schema="content")
+    # users_table = Table("users", meta)
     #
     # # insert existing data from partitioned table
-    # select_stmt = select(auth_history_partitioned_table)
-    # insert_stmt = auth_history_table.insert().from_select(
-    #     auth_history_table.columns, select_stmt
+    # select_stmt = select(users_partitioned_table)
+    # insert_stmt = users_table.insert().from_select(
+    #     users_table.columns, select_stmt
     # )
     # op.execute(insert_stmt)
-    #
-    # op.drop_table("auth_history_tablet", schema="content")
-    # op.drop_table("auth_history_mobile", schema="content")
-    # op.drop_table("auth_history_pc", schema="content")
-    # op.drop_table("auth_history_partitioned", schema="content")
+
+    op.drop_table("users_birthdays_1920_to_1979")
+    op.drop_table("users_birthdays_1980_to_2003")
+    op.drop_table("users_birthdays_2004_to_2022")
+    op.drop_table("users_partitioned")

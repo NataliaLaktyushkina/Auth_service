@@ -26,15 +26,15 @@ def upgrade() -> None:
     sa.UniqueConstraint('name')
     )
     op.create_table('users',
-    sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
-    sa.Column('login', sa.String(), nullable=False),
-    sa.Column('password', sa.String(), nullable=False),
-    sa.Column('email', sa.String(), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('id'),
-    sa.UniqueConstraint('login')
-    )
+        sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
+        sa.Column('login', sa.String(), nullable=False),
+        sa.Column('password', sa.String(), nullable=False),
+        sa.Column('email', sa.String(), nullable=False),
+        sa.PrimaryKeyConstraint('id'),
+        sa.UniqueConstraint('email'),
+        sa.UniqueConstraint('id'),
+        sa.UniqueConstraint('login')
+        )
     op.create_table('login_history',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=True),
