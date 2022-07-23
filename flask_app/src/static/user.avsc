@@ -1,6 +1,6 @@
 {
     'doc': 'Access and refresh tokens.',
-    'name': 'Tokens',
+    'name': 'User',
     'namespace': 'Response',
     'type': "record",
     'fields': [

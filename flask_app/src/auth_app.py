@@ -112,7 +112,6 @@ def create_app():
 def app_with_db():
     app = create_app()
     init_db(app)
-    # init_limiter(app)
     app.app_context().push()
     is_docker = os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False)
     if is_docker:

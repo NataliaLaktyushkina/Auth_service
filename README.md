@@ -29,6 +29,10 @@ https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 
 [Схемы взаимодействия (Avro)](flask_app/src/static)
 
+Полученный токен можно передать в заголовке Authorization, теле запроса или GET-параметрах. 
+Рекомендуется всегда использовать именно заголовки авторизации, 
+как наиболее естественный для HTTP способ.
+
 ####  Jaeger:
 [Реализация](flask_app/src/utils/tracer.py)
 [Использование №1](flask_app/src/api/v1/oauth.py)
