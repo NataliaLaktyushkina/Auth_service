@@ -29,6 +29,8 @@ https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 
 [Схемы взаимодействия (Avro)](flask_app/src/static)
 
+[Репозиторий Movie API](https://github.com/NataliaLaktyushkina/Sprint_5_Async_API.git)
+
 Полученный токен можно передать в заголовке Authorization, теле запроса или GET-параметрах. 
 Рекомендуется всегда использовать именно заголовки авторизации, 
 как наиболее естественный для HTTP способ.
