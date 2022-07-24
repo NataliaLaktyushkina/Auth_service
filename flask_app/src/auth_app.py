@@ -91,14 +91,17 @@ def create_app():
         roles = get_users_roles(identity)
         is_administrator = False
         is_manager = False
+        role_names = []
         for role in roles:
+            role_names.append(role.name)
             if role.name == 'admin':
                 is_administrator = True
             if role.name == 'manager':
                 is_manager = True
 
         return {'is_administrator': is_administrator,
-                'is_manager': is_manager}
+                'is_manager': is_manager,
+                'roles': role_names}
 
     @app.before_request
     def before_request():

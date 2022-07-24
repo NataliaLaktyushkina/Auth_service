@@ -4,3 +4,9 @@
 docker-compose.override.yml
 /Drafts
 /examples
+/flask_app/src/static/login_history.avsc
+/flask_app/src/static/password.avsc
+/flask_app/src/static/roles.avsc
+/flask_app/src/static/user.avsc
+/flask_app/src/static/Username.avsc
+/flask_app/src/static/Username_password.avsc

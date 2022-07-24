@@ -27,9 +27,9 @@ https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
 #### OAuth 2.0:
 [Login](http://127.0.0.1:5001/v1/oauth_login)
 
-[Схемы взаимодействия (Avro)](flask_app/src/static)
+[Схемы взаимодействия](flask_app/src/static/swagger_config.yml)
 
-[Репозиторий Movie API](https://github.com/NataliaLaktyushkina/Sprint_5_Async_API.git)
+[Репозиторий Movie API](https://github.com/NataliaLaktyushkina/Sprint_4_Async_API)
 
 Полученный токен можно передать в заголовке Authorization, теле запроса или GET-параметрах. 
 Рекомендуется всегда использовать именно заголовки авторизации, 
