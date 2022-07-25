@@ -116,12 +116,4 @@ def app_with_db():
     app = create_app()
     init_db(app)
     app.app_context().push()
-    is_docker = os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False)
-    if is_docker:
-        return app
-    else:
-        app.run(port=5001)
-
-
-if __name__ == '__main__':
-    app_with_db()
+    return app
