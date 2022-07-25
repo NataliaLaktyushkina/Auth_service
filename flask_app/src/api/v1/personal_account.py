@@ -31,7 +31,7 @@ def sign_up():
     username = request.values.get("username", None)
     password = request.values.get("password", None)
     email = request.values.get("email", None)
-    if not username or not password or not email:
+    if not all([username, password, email]):
         return make_response('Could not verify', HTTPStatus.UNAUTHORIZED,
                              {'WWW-Authenticate': 'Basic realm="Login required!"'})
 
