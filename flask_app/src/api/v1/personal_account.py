@@ -15,7 +15,7 @@ from database.db_service import create_user, change_password_in_db
 from database.dm_models import User, LoginHistory
 from database.redis_db import redis_app
 from services.personal import Auth
-from utils.tracer import tracer
+from utils.tracer import tracer, conditional_tracer
 from utils.token_bucket import token_bucket
 
 ACCESS_EXPIRES = timedelta(hours=1)
@@ -25,7 +25,8 @@ storage = redis_app
 tracing = Tracing(tracer=tracer)
 
 
-@tracer.start_as_current_span("sign_up")
+# @tracer.start_as_current_span("sign_up")
+@conditional_tracer(tracer.start_as_current_span("sign_up"))
 @token_bucket.rate_limit()
 def sign_up():
     username = request.values.get("username", None)
@@ -43,7 +44,7 @@ def sign_up():
             "refresh_token": jwt_tokens["refresh_token"]}
 
 
-@tracer.start_as_current_span("login")
+@conditional_tracer(tracer.start_as_current_span("login"))
 @token_bucket.rate_limit()
 def login():
     auth = request.authorization
@@ -70,7 +71,7 @@ def login():
 # user’s refresh token must also be revoked when logging out;
 # otherwise, this refresh token could just be used to generate a new access token.
 @jwt_required(verify_type=False)
-@tracer.start_as_current_span("logout")
+@conditional_tracer(tracer.start_as_current_span("logout"))
 def logout():
     token = get_jwt()
     jti = token["jti"]
@@ -86,7 +87,7 @@ def logout():
 # We are using the `refresh=True` options in jwt_required to only allow
 # refresh tokens to access this route.
 @jwt_required(refresh=True)
-@tracer.start_as_current_span("refresh")
+@conditional_tracer(tracer.start_as_current_span("refresh"))
 @token_bucket.rate_limit()
 def refresh():
     """
@@ -115,7 +116,7 @@ def refresh():
 
 
 @jwt_required()
-@tracer.start_as_current_span("login_history")
+@conditional_tracer(tracer.start_as_current_span("login_history"))
 @token_bucket.rate_limit()
 def login_history():
     """
@@ -135,7 +136,7 @@ def login_history():
 
 
 @jwt_required()
-@tracer.start_as_current_span("change_login")
+@conditional_tracer(tracer.start_as_current_span("change_login"))
 def change_login():
 
     new_username = request.values.get('new_username')
@@ -151,7 +152,7 @@ def change_login():
 
 
 @jwt_required()
-@tracer.start_as_current_span("change_password")
+@conditional_tracer(tracer.start_as_current_span("change_password"))
 def change_password():
 
     new_password = request.values.get('new_password')

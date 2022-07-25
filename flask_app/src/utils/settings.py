@@ -35,12 +35,14 @@ class PromSettings(Settings):
 
     REDIS_HOST: str = os.getenv('REDIS_HOST')
     JAEGER_HOST: str = os.getenv('JAEGER_HOST')
+    TRACING: bool = True
 
 
 class DevSettings(Settings):
 
     REDIS_HOST: str
     JAEGER_HOST: str
+    TRACING: bool = False
 
     class Config:
         fields = {
