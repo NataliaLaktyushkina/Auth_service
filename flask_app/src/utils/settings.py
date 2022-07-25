@@ -56,6 +56,7 @@ class DevSettings(Settings):
 
 class OAuthSettings(BaseSettings):
 
+    OAUTH_SECRET_KEY: str = os.getenv("OAUTH_SECRET_KEY")
     GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET: str = os.getenv("GOOGLE_CLIENT_SECRET")
     GOOGLE_ACCESS_TOKEN_URL: str = os.getenv("GOOGLE_ACCESS_TOKEN_URL")

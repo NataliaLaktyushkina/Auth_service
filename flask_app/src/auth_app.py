@@ -63,7 +63,7 @@ def create_app():
     app.register_blueprint(app_v1_blueprint, url_prefix='/v1')
 
     oauth_client.init_app(app)
-    app.secret_key = 'my secret'
+    app.secret_key = oauth_settings.OAUTH_SECRET_KEY
     oauth_service.google = oauth_service.register_google(oauth_client)
 
     jwt = JWTManager(app)
