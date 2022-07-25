@@ -35,6 +35,8 @@ swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL,  oauth_config=
 
 oauth_client = OAuth()
 
+TRACING = settings.get_settings().TRACING
+
 
 @click.command(name='create-superuser')
 @click.argument('name', envvar='SUPERUSER_NAME')
@@ -105,9 +107,10 @@ def create_app():
 
     @app.before_request
     def before_request():
-        request_id = request.headers.get('X-Request-Id')
-        if not request_id:
-            raise RuntimeError('request id is required')
+        if TRACING:
+            request_id = request.headers.get('X-Request-Id')
+            if not request_id:
+                raise RuntimeError('request id is required')
 
     return app
 

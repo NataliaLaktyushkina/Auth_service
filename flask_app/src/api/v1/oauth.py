@@ -1,29 +1,37 @@
-from flask import url_for, session, jsonify
+from http import HTTPStatus
+
+from flask import url_for, session, jsonify, request, make_response
 from opentracing_decorator import Tracing
 
 from database.db_service import create_user, create_social_account
 from database.dm_models import User, SocialAccount
-from services.oauth import get_google_oauth_client
+from services.oauth import get_oauth_client
 from services.personal import auth
-from utils.tracer import tracer
+from utils.tracer import tracer, conditional_tracer
 
 tracing = Tracing(tracer=tracer)
 
 
-@tracer.start_as_current_span("oauth_login")
+@conditional_tracer(tracer.start_as_current_span("oauth_login"))
 def oauth_login():
-    """Authenticate using google."""
+    """Authenticate using social service."""
+    social_service = request.values.get("social_service", None)
+    oauth_client = get_oauth_client(social_service)
+    if not oauth_client:
+        return make_response('Could not find such a provider', HTTPStatus.NOT_FOUND)
+    redirect_uri = url_for("v1.oauth_authorize",
+                           social_service=social_service, _external=True)
+    return oauth_client.authorize_redirect(redirect_uri)
 
-    google = get_google_oauth_client()
-    redirect_uri = url_for("v1.oauth_authorize", _external=True)
-    return google.authorize_redirect(redirect_uri)
 
-
-@tracer.start_as_current_span("oauth_authorize")
+@conditional_tracer(tracer.start_as_current_span("oauth_login"))
 def oauth_authorize():
-    google = get_google_oauth_client()
-    token = google.authorize_access_token()
-    resp = google.get("userinfo", token=token)
+    social_service = request.values.get("social_service", None)
+    oauth_client = get_oauth_client(social_service)
+    if not oauth_client:
+        return HTTPStatus.NOT_FOUND
+    token = oauth_client.authorize_access_token()
+    resp = oauth_client.get("userinfo", token=token)
     user_info = resp.json()
 
     session['profile'] = user_info
