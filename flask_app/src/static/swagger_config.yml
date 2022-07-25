@@ -308,6 +308,12 @@ paths:
     get:
       tags:
         - Social
+      parameters:
+        - in: query
+          name: social_service
+          schema:
+            type: string
+          required: true
       responses:
         '200':
           description: OK (successfully authenticated)

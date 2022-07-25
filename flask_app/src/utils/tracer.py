@@ -14,6 +14,7 @@ from utils.settings import get_settings
 jaeger_settings = get_settings()
 jaeger_host = jaeger_settings.JAEGER_HOST
 jaeger_port = jaeger_settings.JAEGER_PORT
+TRACING = jaeger_settings.TRACING
 
 resource = Resource(attributes={
     SERVICE_NAME: 'Auth_API'
@@ -51,3 +52,9 @@ _metrics.set_meter_provider(provider)
 meter = _metrics.get_meter(__name__)
 
 
+def conditional_tracer(decorator):
+    def tracer_decorator(func):
+        if not TRACING:
+            return func
+        return decorator(func)
+    return tracer_decorator

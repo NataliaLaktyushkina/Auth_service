@@ -20,5 +20,7 @@ def register_google(oauth_client):
     )
 
 
-def get_google_oauth_client():
-    return google
+def get_oauth_client(client_name):
+    if client_name =='google':
+        return google
+    return None

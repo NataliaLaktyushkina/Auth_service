@@ -35,6 +35,8 @@ swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL,  oauth_config=
 
 oauth_client = OAuth()
 
+TRACING = settings.get_settings().TRACING
+
 
 @click.command(name='create-superuser')
 @click.argument('name', envvar='SUPERUSER_NAME')
@@ -63,7 +65,7 @@ def create_app():
     app.register_blueprint(app_v1_blueprint, url_prefix='/v1')
 
     oauth_client.init_app(app)
-    app.secret_key = 'my secret'
+    app.secret_key = oauth_settings.OAUTH_SECRET_KEY
     oauth_service.google = oauth_service.register_google(oauth_client)
 
     jwt = JWTManager(app)
@@ -105,9 +107,10 @@ def create_app():
 
     @app.before_request
     def before_request():
-        request_id = request.headers.get('X-Request-Id')
-        if not request_id:
-            raise RuntimeError('request id is required')
+        if TRACING:
+            request_id = request.headers.get('X-Request-Id')
+            if not request_id:
+                raise RuntimeError('request id is required')
 
     return app
 
@@ -116,12 +119,4 @@ def app_with_db():
     app = create_app()
     init_db(app)
     app.app_context().push()
-    is_docker = os.environ.get('AM_I_IN_A_DOCKER_CONTAINER', False)
-    if is_docker:
-        return app
-    else:
-        app.run(port=5001)
-
-
-if __name__ == '__main__':
-    app_with_db()
+    return app
