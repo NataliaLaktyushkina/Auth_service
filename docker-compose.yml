@@ -29,6 +29,8 @@ services:
 
   auth_api:
     container_name: auth_api
+    extra_hosts:
+      - host.docker.internal:host-gateway
     build:
       context: flask_app
     env_file:
@@ -50,5 +52,8 @@ services:
 volumes:
   static_data:
 
+networks:
+  default:
+    name: notifications_network
 
 
