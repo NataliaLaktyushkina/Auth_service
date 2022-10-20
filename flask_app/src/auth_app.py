@@ -105,12 +105,12 @@ def create_app():
                 'is_manager': is_manager,
                 'roles': role_names}
 
-    @app.before_request
-    def before_request():
-        if TRACING:
-            request_id = request.headers.get('X-Request-Id')
-            if not request_id:
-                raise RuntimeError('request id is required')
+    # @app.before_request
+    # def before_request():
+    #     if TRACING:
+    #         request_id = request.headers.get('X-Request-Id')
+    #         if not request_id:
+    #             raise RuntimeError('request id is required')
 
     return app
 

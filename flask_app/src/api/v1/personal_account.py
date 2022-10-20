@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 from http import HTTPStatus
 
@@ -172,3 +173,14 @@ def change_password():
     return jsonify(msg='Password successfully changed',
                    access_token=access_token,
                    refresh_token=refresh_token)
+
+
+def user_by_id():
+    user_id = request.values.get("user_id", None)
+
+    user = User.query.filter_by(id=user_id).first()
+    if not user:
+        return make_response('User does not exist', HTTPStatus.BAD_REQUEST)
+    user_data = {'email': user.email,
+                 'name': user.login}
+    return {'user': user_data}
