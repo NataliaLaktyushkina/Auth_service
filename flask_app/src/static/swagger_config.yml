@@ -123,6 +123,29 @@ paths:
                 $ref: '#/components/schemas/LoginHistory'
         '401':
           description: Couldnot verify
+  /user_by_id:
+    get:
+      tags:
+        - Personal account
+      description: Additional user info
+      parameters:
+        - in: query
+          name: user_id
+          schema:
+            type: string
+          required: true
+
+      responses:
+        '200':
+          description: User's account
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '500':
+          description: User doesnt exist
   /logout:
     delete:
       tags:
