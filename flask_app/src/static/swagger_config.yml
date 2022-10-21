@@ -34,6 +34,10 @@ components:
       type: array
       items:
         type: string
+    UsersList:
+      type: array
+      items:
+        type: string
   securitySchemes:
     Bearer:
       type: http
@@ -134,7 +138,6 @@ paths:
           schema:
             type: string
           required: true
-
       responses:
         '200':
           description: User's account
@@ -146,6 +149,19 @@ paths:
                   type: string
         '500':
           description: User doesnt exist
+  /users_list:
+    get:
+      tags:
+        - Personal account
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersList'
+        '401':
+          description: Could not verify
   /logout:
     delete:
       tags:
