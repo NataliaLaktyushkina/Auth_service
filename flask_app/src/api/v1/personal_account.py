@@ -184,3 +184,9 @@ def user_by_id():
     user_data = {'email': user.email,
                  'name': user.login}
     return {'user': user_data}
+
+
+def users_list():
+    users = User.query.all()
+    output = [user.id for user in users]
+    return jsonify(users=output)
