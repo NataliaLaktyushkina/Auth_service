@@ -1,6 +1,5 @@
 
-#### Адрес репозитория:
-https://github.com/NataliaLaktyushkina/Auth_sprint_2.git
+## Внедрение аутентификации через социальные сети. ##
 
 [Получить client_id и secret_key](https://console.cloud.google.com/apis/credentials/oauthclient)
 
